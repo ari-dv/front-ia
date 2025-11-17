@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://fruit-classifier-web-6iyr.onrender.com';
 
 export default function FruitClassifier() {
   const [file, setFile] = useState(null);
@@ -177,11 +176,16 @@ export default function FruitClassifier() {
         {/* Header */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
           <div className="px-6 py-6">
-            <h1 className="text-3xl font-bold text-gray-900">FruitAI Classifier</h1>
-            <p className="text-gray-500 text-sm mt-1">Análisis inteligente de clasificación de frutas</p>
+            <div className="flex items-center gap-4">
+              
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Clasificador de Frutas</h1>
+                <p className="text-gray-500 text-sm mt-1">Análisis inteligente de clasificación de frutas</p>
+              </div>
+            </div>
           </div>
         </div>
-
+        
         {/* Navigation Tabs */}
         <div className="px-6 py-4 border-b border-gray-200 bg-white flex gap-2 overflow-x-auto">
           <button
@@ -292,29 +296,25 @@ export default function FruitClassifier() {
 
               {/* Results Sidebar */}
               {result && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6">Resultado</h3>
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit result-card">
+                  <h3 className="result-header">Resultado</h3>
 
                   <div className="space-y-6">
                     {/* Fruit Classification */}
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-gray-600 text-sm font-medium mb-2">Fruta Identificada</p>
-                      <p className="text-3xl font-bold text-green-700">
-                        {result.prediction.fruit}
-                      </p>
+                    <div>
+                      <p className="text-gray-600 text-xs font-medium mb-3 uppercase tracking-wide">Fruta Identificada</p>
+                      <p className="fruit-name">{result.prediction.fruit}</p>
                     </div>
 
-                    {/* Confidence Bar */}
-                    <div>
-                      <div className="flex justify-between items-center mb-3">
+                    {/* Confidence Box */}
+                    <div className="confidence-container">
+                      <div className="confidence-label">
                         <p className="text-sm font-semibold text-gray-700">Nivel de Confianza</p>
-                        <p className="text-sm font-bold text-green-600">
-                          {(result.prediction.confidence * 100).toFixed(1)}%
-                        </p>
+                        <p className="confidence-value">{(result.prediction.confidence * 100).toFixed(1)}%</p>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                      <div className="confidence-bar-container">
                         <div
-                          className="bg-gradient-to-r from-green-400 to-green-600 h-full transition-all duration-500"
+                          className="confidence-bar"
                           style={{
                             width: `${result.prediction.confidence * 100}%`,
                           }}
@@ -322,28 +322,28 @@ export default function FruitClassifier() {
                       </div>
                     </div>
 
-                    {/* Time */}
-                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                      <p className="text-xs text-gray-500 mb-1">Tiempo de Procesamiento</p>
-                      <p className="text-lg font-mono font-bold text-gray-700">{result.processing_time}</p>
+                    {/* Time Badge */}
+                    <div className="time-badge">
+                      <p className="time-label">Tiempo de Procesamiento</p>
+                      <p className="time-value">{result.processing_time}</p>
                     </div>
 
                     {/* Alternatives */}
                     {result.prediction.alternatives && result.prediction.alternatives.length > 0 && (
-                      <div className="border-t pt-4">
-                        <p className="text-sm font-semibold text-gray-700 mb-3">Alternativas</p>
-                        <div className="space-y-3">
+                      <div className="alternatives-section">
+                        <p className="alternatives-title">Otras Opciones</p>
+                        <div>
                           {result.prediction.alternatives.map((alt, idx) => (
-                            <div key={idx}>
-                              <div className="flex justify-between mb-1">
-                                <span className="text-sm text-gray-700">{alt.fruit}</span>
-                                <span className="text-sm font-semibold text-gray-600">
+                            <div key={idx} className="alternative-item">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="alternative-name">{alt.fruit}</span>
+                                <span className="text-xs font-semibold text-gray-700">
                                   {(alt.confidence * 100).toFixed(1)}%
                                 </span>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div className="alternative-bar">
                                 <div
-                                  className="bg-orange-400 h-full rounded-full"
+                                  className="alternative-progress"
                                   style={{ width: `${alt.confidence * 100}%` }}
                                 ></div>
                               </div>
@@ -354,18 +354,18 @@ export default function FruitClassifier() {
                     )}
 
                     {/* Download Options */}
-                    <div className="border-t pt-4 space-y-2">
+                    <div className="download-section">
                       <button
                         onClick={downloadResults}
-                        className="w-full py-2 px-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+                        className="download-btn download-json"
                       >
                         Descargar JSON
                       </button>
                       <button
                         onClick={downloadAsImage}
-                        className="w-full py-2 px-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition text-sm"
+                        className="download-btn download-image"
                       >
-                        Descargar Imagen
+                        Descargar Resultado
                       </button>
                     </div>
                   </div>
@@ -435,10 +435,7 @@ export default function FruitClassifier() {
                   <p className="text-gray-600 text-sm font-medium mb-2">Fecha Inicio</p>
                   <p className="text-sm font-mono text-green-600">{stats.start_time.split('T')[0]}</p>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                  <p className="text-gray-600 text-sm font-medium mb-2">Estado</p>
-                  <p className="text-lg font-bold text-green-600">Activo</p>
-                </div>
+                
 
                 {Object.entries(stats.predictions_by_class || {}).map(([fruit, count]) => (
                   <div key={fruit} className="bg-orange-50 border border-orange-200 rounded-lg p-6">
